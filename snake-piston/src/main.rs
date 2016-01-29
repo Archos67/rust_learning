@@ -38,8 +38,8 @@ impl App {
     fn render(&mut self, args: &RenderArgs) {
         use graphics::*;
 
-        const BLUE: [f32; 4] = [0.0, 0.0, 1.0, 1.0];
-        const LIGHT_BLUE: [f32; 4] = [0.4, 0.4, 0.9, 1.0];
+        const GREEN: [f32; 4] = [0.0, 1.0, 0.0, 1.0];
+        const LIGHT_GREEN: [f32; 4] = [0.4, 1.0, 0.4, 1.0];
         const RED: [f32; 4] = [1.0, 0.0, 0.0, 1.0];
         const LIGHT_RED: [f32; 4] = [1.0, 0.4, 0.4, 1.0];
         const WHITE:   [f32; 4] = [1.0, 1.0, 1.0, 1.0];
@@ -62,8 +62,8 @@ impl App {
             for block in blocks {
                 let transform = c.transform.trans((block.x * BLOCK_SIZE) as f64, (block.y * BLOCK_SIZE) as f64);
 
-                rectangle(BLUE, square, transform, gl);
-                rectangle(LIGHT_BLUE, child_square, transform, gl);
+                rectangle(GREEN, square, transform, gl);
+                rectangle(LIGHT_GREEN, child_square, transform, gl);
             }
             let transform = c.transform.trans((candy.x * BLOCK_SIZE) as f64, (candy.y * BLOCK_SIZE) as f64);
             rectangle(RED, square, transform, gl);
