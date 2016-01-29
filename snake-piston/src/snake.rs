@@ -119,7 +119,8 @@ impl Snake {
         let dir = self.dir;
         let candy = self.candy;
         //bounds checking
-        let limit = self.grid_width - 1;
+        // This code didn't work so I had to hard code it.
+        //let limit = self.grid_width - 1;
 
         self.alive = match (dir, front.x) {
             (Direction::LEFT, 0) => false,
@@ -127,7 +128,7 @@ impl Snake {
             _ => true,
         };
         if !self.alive { return false }
-        let limit = self.grid_height - 1;
+        //let limit = self.grid_height - 1;
         self.alive = match (dir, front.y) {
             (Direction::UP, 0) => false,
             (Direction::DOWN, 59 /* TODO make dynamics */) => false,

@@ -19,7 +19,6 @@ use std::fs::OpenOptions;
 
 mod snake;
 use snake::Snake;
-use snake::Block;
 
 // named constants
 const WINDOW_WIDTH: u32 = 720;
@@ -38,8 +37,8 @@ impl App {
     fn render(&mut self, args: &RenderArgs) {
         use graphics::*;
 
-        const GREEN: [f32; 4] = [0.0, 1.0, 0.0, 1.0];
-        const LIGHT_GREEN: [f32; 4] = [0.4, 1.0, 0.4, 1.0];
+        const GREEN: [f32; 4] = [0.2, 0.8, 0.2, 1.0];
+        const LIGHT_GREEN: [f32; 4] = [0.4, 0.9, 0.4, 1.0];
         const RED: [f32; 4] = [1.0, 0.0, 0.0, 1.0];
         const LIGHT_RED: [f32; 4] = [1.0, 0.4, 0.4, 1.0];
         const WHITE:   [f32; 4] = [1.0, 1.0, 1.0, 1.0];
@@ -58,25 +57,25 @@ impl App {
             clear(WHITE, gl);
 
 
-            // Draw all of the blocks
+            // Draw all of the blocks of the snake
             for block in blocks {
                 let transform = c.transform.trans((block.x * BLOCK_SIZE) as f64, (block.y * BLOCK_SIZE) as f64);
 
                 rectangle(GREEN, square, transform, gl);
                 rectangle(LIGHT_GREEN, child_square, transform, gl);
             }
+            // Draw Candy
             let transform = c.transform.trans((candy.x * BLOCK_SIZE) as f64, (candy.y * BLOCK_SIZE) as f64);
             rectangle(RED, square, transform, gl);
             rectangle(LIGHT_RED, child_square, transform, gl);
 
-
+            // Draw score and high score
             let mut transform: graphics::context::Context = c.trans(50.0, 50.0);
             let mut t = Text::new(18);
-
             t.draw(&format!("High Score: {}", snake.high_score), use_cache, &transform.draw_state, transform.transform, gl);
-
             transform = c.trans(50.0, 25.0);
             t.draw(&format!("Score: {}", snake.current_score), use_cache, &transform.draw_state, transform.transform, gl);
+
             // Draw Pause overlay
             if snake.paused || !snake.alive {
                 let transform = c.transform.trans(0.0, 0.0).scale(100.0, 100.0);
@@ -91,21 +90,21 @@ impl App {
                     t.draw("P to Unpause", use_cache, &transform.draw_state, transform.transform, gl);
 
                 } else {
-                    //TODO Draw "Game Over"
+                    // Draw "Game Over"
                     t.color = WHITE;
                     let mut transform = c.trans(300.0, 100.0);
                     t.draw("Game Over", use_cache, &transform.draw_state, transform.transform, gl);
+
+                    // Draw "R to Restart"
                     transform = c.trans(300.0, 150.0);
                     t.draw("R to Restart", use_cache, &transform.draw_state, transform.transform, gl);
-                    let mut transform: graphics::context::Context = c.trans(50.0, 50.0);
-                    //TODO Draw "R to Restart"
                 }
             }
         });
     }
 
     fn update(&mut self, args: &UpdateArgs) {
-
+        //TODO What even happens here
     }
 
     fn key_press(&mut self, key: Key) {
@@ -140,7 +139,7 @@ fn main() {
         .exit_on_esc(true)
         .build()
         .unwrap();
-
+    // Load the fonts
     let font_path = match OpenOptions::new().open("OpenSans-Semibold.ttf") {
         Ok(_) => Path::new("FiraMono-Bold.ttf"),
         Err(_) => {
@@ -150,7 +149,7 @@ fn main() {
             }
         }
     };
-
+    // Create an Arc<Mutex<Snake>> to wrap around the game to allow the renderer and the main thread to share resources
     let snake = Arc::new(Mutex::new(Snake::new((WINDOW_WIDTH/BLOCK_SIZE) as u32, (WINDOW_HEIGHT/BLOCK_SIZE) as u32)));
     // Spawn thread to update snake
     {
@@ -171,6 +170,8 @@ fn main() {
         snake: snake,
         cache: GlyphCache::new(font_path).unwrap(),
     };
+
+    //Monitor events
     let mut events = window.events();
     while let Some(e) = events.next(&mut window) {
         match e {
