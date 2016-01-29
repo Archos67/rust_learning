@@ -2,6 +2,7 @@
 name = "snake-piston"
 version = "0.1.0"
 dependencies = [
+ "image 0.6.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "piston 0.17.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "piston2d-graphics 0.13.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "piston2d-opengl_graphics 0.23.0 (registry+https://github.com/rust-lang/crates.io-index)",

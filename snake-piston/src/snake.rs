@@ -20,6 +20,7 @@ pub struct Block {
 pub struct Snake {
     pub alive: bool,
     dir: Direction,
+    dir_lock: bool,
     pub snake: LinkedList<Block>,
     pub candy: Block,
     growth: u32,
@@ -27,11 +28,12 @@ pub struct Snake {
     grid_height: u32,
     pub current_score: u32,
     pub high_score: u32,
+    pub paused: bool
 }
 
 impl Snake {
     pub fn new(grid_width: u32, grid_height: u32) -> Snake{
-        Snake {
+        let mut s = Snake {
             alive: true,
             dir: Direction::RIGHT,
             candy: Block {x: grid_width / 2 , y: (grid_height / 2) + 5},
@@ -44,8 +46,12 @@ impl Snake {
             grid_width: grid_width,
             grid_height: grid_height,
             current_score: 0,
-            high_score: 0
-        }
+            high_score: 0,
+            paused: true,
+            dir_lock: false,
+        };
+        s.get_candy();
+        s
     }
 
     pub fn reset(&mut self) {
@@ -57,6 +63,7 @@ impl Snake {
             new_snake };
         self.growth = 0;
         self.current_score =0;
+        self.paused = true;
     }
 
     fn reverse(d: Direction ) -> Direction {
@@ -85,9 +92,12 @@ impl Snake {
              self.get_candy();
          }
     }
-
+    pub fn pause(&mut self) {
+        self.paused = !self.paused;
+    }
     pub fn change_direction(&mut self, k: Key) {
         use piston::input::keyboard::Key::*;
+        if self.dir_lock { return }
         let dir = self.dir;
         let new_dir  = match k {
             Up => Direction::UP,
@@ -100,10 +110,12 @@ impl Snake {
             return
         }
         self.dir = new_dir;
+        self.dir_lock = true;
     }
 
     pub fn tick (&mut self) -> bool {
         let front: Block = self.snake.front().unwrap().clone();
+        self.dir_lock = false;
         let dir = self.dir;
         let candy = self.candy;
         //bounds checking
@@ -147,13 +159,13 @@ impl Snake {
 
         if self.growth == 0 {
             self.snake.pop_back();
+        } else {
+            self.growth-=1;
         }
-
-        self.growth = 0;
 
         let front: Block = self.snake.front().unwrap().clone();
         if front == candy {
-            self.growth = 1;
+            self.growth +=3;
             self.current_score += 1;
             self.get_candy();
         }
